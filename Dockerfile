@@ -1,11 +1,17 @@
+# Use a Raspberry Pi 3 compatible base image (Debian Buster or Bullseye)
 FROM --platform=linux/arm/v7 python:3.8-slim-buster
 
+# Set environment variables to avoid warnings/errors during builds
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
 
-# 1. Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Update and install system dependencies for Kivy, Python dev, Tkinter, build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    git \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
     libgl1-mesa-dev \
     libgles2-mesa-dev \
     libsdl2-dev \
@@ -30,19 +36,19 @@ RUN apt-get update && apt-get install -y \
     libgl-dev \
     libegl-dev \
     pkg-config \
-    python3-dev \
-    tcl-dev tk-dev \
+    tcl-dev \
+    tk-dev \
     libx11-dev \
-    git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2. Upgrade pip and install Python dependencies
-RUN pip install --upgrade pip setuptools wheel cython==0.29.36
+# Upgrade pip, setuptools, wheel
+RUN pip3 install --upgrade pip setuptools wheel
 
-# 3. Install Kivy (base - بدون deps زي garden)
-RUN pip install kivy[base]==2.2.1
+# Install cython pinned version and Kivy pinned version (2.2.1 is stable)
+RUN pip3 install cython==0.29.36
+RUN pip3 install kivy==2.2.1
 
-# 4. Verify tkinter (part of python3-dev + tk-dev)
-RUN python3 -c "import tkinter"
+# Optional: Add your custom Tkinter or any other setup here
 
+# Default command to run python interactive shell
 CMD ["python3"]
