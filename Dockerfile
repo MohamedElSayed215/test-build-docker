@@ -3,23 +3,24 @@ FROM balenalib/raspberrypi3-debian-python:3.8-buster-build
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 
-# Install dependencies
+# تحديث وتثبيت المتطلبات الأساسية
 RUN apt-get update && apt-get install -y \
-    python3-dev \
     build-essential \
+    python3-pip \
+    python3-dev \
     libgl1-mesa-dev \
     libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
     libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev \
-    zlib1g-dev libffi-dev libsqlite3-dev libjpeg-dev \
+    libffi-dev zlib1g-dev libjpeg-dev libfreetype6-dev libbz2-dev \
+    libgstreamer1.0-0 libgstreamer-plugins-base1.0-dev \
+    gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-tools \
+    libmtdev-dev libusb-1.0-0 libudev-dev \
     tk-dev \
-    gstreamer1.0-tools gstreamer1.0-plugins-base \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Python packages
-RUN pip3 install --no-cache-dir cython==0.29.36 kivy==2.2.1
-
-# Optional: Copy and apply patch for custom Tkinter
-# COPY custom-tkinter.patch /tmp/
-# RUN patch -p1 < /tmp/custom-tkinter.patch
+# تثبيت cython أولًا، ثم kivy
+RUN pip3 install --upgrade pip setuptools wheel
+RUN pip3 install cython==0.29.36
+RUN pip3 install kivy==2.2.1
 
 CMD ["python3"]
