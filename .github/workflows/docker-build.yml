@@ -13,6 +13,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Set lowercase repository owner
+      id: vars
+      run: echo "OWNER_LOWER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
     - name: Set up QEMU (ARM emulation)
       uses: docker/setup-qemu-action@v2
 
@@ -32,4 +36,4 @@ jobs:
         context: .
         push: true
         platforms: linux/arm/v7
-        tags: ghcr.io/${{ github.repository_owner.toLowerCase() }}/pi3-python-mqtt:latest
+        tags: ghcr.io/${{ env.OWNER_LOWER }}/pi3-python-mqtt:latest
